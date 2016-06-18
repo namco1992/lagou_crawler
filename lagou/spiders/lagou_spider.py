@@ -1,5 +1,4 @@
 import scrapy
-import logging
 from lagou.items import LagouItem
 
 
@@ -7,7 +6,7 @@ class LagouSpider(scrapy.Spider):
     name = "lagou"
     allowed_domains = ["lagou.com"]
     start_urls = [
-        "http://www.lagou.com/jobs/%d.html" % page for page in xrange(500000, 2000000)
+        "http://www.lagou.com/jobs/%d.html" % page for page in xrange(798605, 2000000)
         # "http://www.lagou.com/jobs/1952115.html"
     ]
 
