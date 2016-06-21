@@ -9,7 +9,7 @@ import pymongo
 PROJ_HOME = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(PROJ_HOME)
 
-from lagou.settings import MONGO_URI, MONGO_DATABASE, COLLECTION_NAME
+from settings import MONGO_URI, MONGO_DATABASE, COLLECTION_NAME
 """
 For the analyzing of captured job data.
 """
@@ -29,6 +29,9 @@ def clean_keywords(data):
             if '/' in keyword and keyword != 'tcp/ip':
                 words = keyword.split('/')
                 for x in words:
+                    x = x.strip()
+                    if len(x) == 0:
+                        continue
                     result[x] = result.setdefault(x, 0) + 1
             else:
                 result[keyword] = result.setdefault(keyword, 0) + 1
@@ -39,7 +42,9 @@ def clean_keywords(data):
 def job_requests_stats(conn):
     ret = conn.find({}, {'job_requests': 1, '_id': 0})
     stats_result = clean_job_requests(ret)
-    print json.dumps(stats_result)
+    with open('job_requests_result.json', 'a') as f:
+        json.dump(stats_result, f)
+    # print json.dumps(stats_result)
 
 
 def clean_job_requests(data):
@@ -48,21 +53,21 @@ def clean_job_requests(data):
     for item in data:
         sal = salary_average(item['job_requests'][0].encode('utf-8'))
         salary[sal] = salary.setdefault(sal, 0) + 1
-        # loc = item['job_requests'][1]
-        # location[loc] = location.setdefault(loc, 0) + 1
-        # exp = item['job_requests'][2]
-        # experience[exp] = experience.setdefault(exp, 0) + 1
-        # deg = item['job_requests'][3]
-        # degree[deg] = degree.setdefault(deg, 0) + 1
-        # typ = item['job_requests'][4]
-        # type_[typ] = type_.setdefault(typ, 0) + 1
+        loc = item['job_requests'][1]
+        location[loc] = location.setdefault(loc, 0) + 1
+        exp = item['job_requests'][2]
+        experience[exp] = experience.setdefault(exp, 0) + 1
+        deg = item['job_requests'][3]
+        degree[deg] = degree.setdefault(deg, 0) + 1
+        typ = item['job_requests'][4]
+        type_[typ] = type_.setdefault(typ, 0) + 1
 
     result = {
         'salary': salary,
-        # 'location': location,
-        # 'experience': experience,
-        # 'degree': degree,
-        # 'type': type_
+        'location': location,
+        'experience': experience,
+        'degree': degree,
+        'type': type_
     }
     return result
 
