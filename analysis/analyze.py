@@ -19,30 +19,35 @@ def keywords_stats(conn):
     # ret = conn.find({'job_id': {'$lt': '500478'}}, {'tech_keywords': 1, '_id': 0})
     ret = conn.find({}, {'tech_keywords': 1, '_id': 0})
     stats_result = clean_keywords(ret)
-    print json.dumps(stats_result)
+    with open('keywords_stats.json', 'w') as f:
+        json.dump(stats_result, f)
 
 
 def clean_keywords(data):
     result = {}
+    after_stats_result = {}
     for item in data:
         for keyword in item['tech_keywords']:
             if '/' in keyword and keyword != 'tcp/ip':
                 words = keyword.split('/')
                 for x in words:
                     x = x.strip()
-                    if len(x) == 0:
-                        continue
-                    result[x] = result.setdefault(x, 0) + 1
+                    if len(x) > 0:
+                        result[x] = result.setdefault(x, 0) + 1
             else:
                 result[keyword] = result.setdefault(keyword, 0) + 1
-    result = OrderedDict(sorted(result.iteritems(), key=lambda d: d[1], reverse=True))
-    return result
+
+    for keyword, count in result.iteritems():
+        if count > 50:
+            after_stats_result[keyword] = count
+    return OrderedDict(sorted(after_stats_result.iteritems(), key=lambda d: d[1], reverse=True))
+
 
 
 def job_requests_stats(conn):
     ret = conn.find({}, {'job_requests': 1, '_id': 0})
     stats_result = clean_job_requests(ret)
-    with open('job_requests_result.json', 'a') as f:
+    with open('job_requests_result.json', 'w') as f:
         json.dump(stats_result, f)
     # print json.dumps(stats_result)
 
@@ -75,7 +80,7 @@ def clean_job_requests(data):
 def salary_average(salary_range):
     if '-' in salary_range:
         lower, upper = salary_range.split('-')
-        return sum([int(lower[:-1]), int(upper[:-1])])/2
+        return sum([int(lower[:-1]), int(upper[:-1])]) / 2
     else:
         return int(salary_range.split('k')[0])
 
@@ -97,8 +102,8 @@ class MongoManager(object):
 
 def main():
     conn = MongoManager.init_connection()
-    # keywords_stats(conn)
-    job_requests_stats(conn)
+    keywords_stats(conn)
+    # job_requests_stats(conn)
 
 if __name__ == '__main__':
     main()
