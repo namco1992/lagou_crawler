@@ -24,6 +24,10 @@ def wirte_json_file(data, file_name, folder='./data/', mode='w'):
         json.dump(data, f)
 
 
+def _generate_section_sum(data, lower=0, upper=100000):
+    return sum([y for x, y in data.iteritems() if lower <= int(x) <= upper])
+
+
 class MongoManager(object):
 
     _client = pymongo.MongoClient(LOCAL_URI)

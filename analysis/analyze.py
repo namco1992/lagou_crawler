@@ -7,7 +7,7 @@ PROJ_HOME = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(PROJ_HOME)
 
 from settings import OMITTING_WORDS
-from utils import count_filter, MongoManager, dict_sort, wirte_json_file
+from utils import count_filter, MongoManager, dict_sort, wirte_json_file, _generate_section_sum
 """
 For the analyzing of captured job data.
 """
@@ -16,8 +16,9 @@ For the analyzing of captured job data.
 def keywords_stats(conn):
     # ret = conn.find({'job_id': {'$lt': '500478'}}, {'tech_keywords': 1, '_id': 0})
     ret = conn.find({}, {'tech_keywords': 1, '_id': 0})
-    stats_result = clean_keywords_v2(ret)
-    wirte_json_file(stats_result, 'keywords_stats.json')
+    keywords_stats, keywords_cloud = clean_keywords_v2(ret)
+    wirte_json_file(keywords_stats, 'keywords_stats.json')
+    wirte_json_file(keywords_cloud, 'keywords_cloud.json')
 
 
 def clean_keywords(data):
@@ -39,6 +40,7 @@ def clean_keywords(data):
 def clean_keywords_v2(data):
     result = {}
     prepared_data = {'keywords': [], 'counts': []}
+    keywords_cloud_data = []
     for item in data:
         for keyword in item['tech_keywords']:
             if '/' in keyword and keyword != 'tcp/ip':
@@ -53,8 +55,8 @@ def clean_keywords_v2(data):
     for key, value in result.iteritems():
         prepared_data['keywords'].append(key)
         prepared_data['counts'].append(value)
-    # return dict_sort(result)
-    return prepared_data
+        keywords_cloud_data.append({'size': value, 'text': key})
+    return prepared_data, keywords_cloud_data
 
 
 def job_requests_stats(conn):
@@ -80,6 +82,7 @@ def clean_job_requests(data):
         type_[typ] = type_.setdefault(typ, 0) + 1
 
     # generate salary stats for pie chart
+    salary = _generate_salary_stats(salary)
     # clean experience data
     experience = dict_sort(count_filter(experience, 10))
     # clean location data
@@ -102,6 +105,19 @@ def salary_average(salary_range):
         return sum([int(lower[:-1]), int(upper[:-1])]) / 2
     else:
         return int(salary_range.split('k')[0])
+
+
+def _generate_salary_stats(data):
+    section_data = {
+        '1-5k': _generate_section_sum(data, 1, 5),
+        '6-10k': _generate_section_sum(data, 6, 10),
+        '11-15k': _generate_section_sum(data, 11, 15),
+        '16-20k': _generate_section_sum(data, 16, 20),
+        '21-25k': _generate_section_sum(data, 21, 25),
+        '26-30k': _generate_section_sum(data, 26, 30),
+        '30k以上': _generate_section_sum(data, 31)
+    }
+    return section_data
 
 
 def main():
