@@ -70,8 +70,6 @@ class MongoPipeline(object):
         self.client.close()
 
     def process_item(self, item, spider):
-        # 将 job_id 设为唯一键
-        # 如果由于 job_id 重复则记录 log
         collection = self.db[self.collection_name]
         try:
             collection.replace_one({'job_id': item['job_id']}, dict(item), True)

@@ -13,6 +13,11 @@ For the analyzing of captured job data.
 """
 
 
+def job_id_stats(conn):
+    ret = conn.find({}, {'job_id': 1, '_id': 0})
+    wirte_json_file([item['job_id'] for item in ret], 'job_id_stats.json', seperate_by_date=False)
+
+
 def keywords_stats(conn):
     # ret = conn.find({'job_id': {'$lt': '500478'}}, {'tech_keywords': 1, '_id': 0})
     ret = conn.find({}, {'tech_keywords': 1, '_id': 0})
@@ -122,8 +127,9 @@ def _generate_salary_stats(data):
 
 def main():
     conn = MongoManager.init_connection()
+    job_id_stats(conn)
     keywords_stats(conn)
-    # job_requests_stats(conn)
+    job_requests_stats(conn)
     MongoManager.close_connection()
 
 if __name__ == '__main__':
