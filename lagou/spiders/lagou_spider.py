@@ -13,8 +13,8 @@ class LagouSpider(scrapy.Spider):
     name = "lagou"
     allowed_domains = ["lagou.com"]
 
-    def __init__(self, fullsize_crawl=False, *args, **kwargs):
-        if fullsize_crawl is False:
+    def __init__(self, fullsize_crawl='False', *args, **kwargs):
+        if fullsize_crawl == 'False':
             with open('../data/job_id_stats.json', 'r') as f:
                 self.start_urls = [
                     "http://www.lagou.com/jobs/%d.html" % int(page) for page in json.load(f)

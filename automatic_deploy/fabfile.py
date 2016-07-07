@@ -41,7 +41,7 @@ def deploy():
         run('tar -xvzf data.tar.gz -C %s' % DC.REMOTE_PROJ_DIR)
 
 
-def test():
+def automatic_deploy():
     with settings(warn_only=False):
         prepare_deploy()
         zip_files()
