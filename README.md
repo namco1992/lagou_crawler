@@ -27,9 +27,9 @@ fab automatic_deploy
 ```
 
 ### 4. Powered by
-scrapy
-mongodb
-fabric
+- scrapy
+- mongodb
+- fabric
 
 ### 5. LICENCE
 MIT
