@@ -1,19 +1,9 @@
 # coding: utf-8
 import logging
 
-# roledefs = {
-#     'local_test': ['root@192.168.1.114:22', ],
-#     'production': ['10.19.54.11', '10.19.54.12'],
-#     'gray': ['bndk@10.19.54.13:22', ]
-# }
-
-# passwords = {
-#     'root@192.168.1.114:22': '123321',
-# }
-
-hosts = ['107.170.207.236:23334']
-user = 'redev'
-key_filename = 'C:\Users\Administrator\.ssh\do1.pem'
+hosts = ['192.168.1.1:22']
+user = 'example_user'
+key_filename = 'path/to/pem'
 
 
 class LogConfig(object):
