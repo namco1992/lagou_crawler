@@ -13,6 +13,7 @@
 
 ### 3. 使用方法
 首先参照`settings.py.example`设置 settings.py。
+
 1. 爬虫
 ```shell
 scrapy crawl lagou
