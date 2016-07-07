@@ -25,24 +25,25 @@ def prepare_deploy():
 
 
 def zip_files():
-    with lcd(DC.LOCAL_TAR_DIR):
-        local(
-            'tar -czf data.tar.gz %s' % DC.RELATIVE_DATA_DIR+'data_'+timestamp())
+    with lcd(DC.LOCAL_RELATIVE_DATA_DIR+'data_'+timestamp()):
+        local('tar -czf data.tar.gz ./')
+        local('mv data.tar.gz ../../automatic_deploy/deploy_files')
 
 
 def upload():
     # upload the zipped files
     with lcd(DC.LOCAL_TAR_DIR):
-        put('data.tar.gz', DC.BASE_DIR+'data.tar.gz')
+        put('data.tar.gz', DC.REMOTE_BASE_DIR+'data.tar.gz')
 
 
 def deploy():
-    with cd()
+    with cd(DC.REMOTE_BASE_DIR):
+        run('tar -xvzf data.tar.gz -C %s' % DC.REMOTE_PROJ_DIR)
 
 
 def test():
-    with settings(warn_only=True):
+    with settings(warn_only=False):
         prepare_deploy()
         zip_files()
         upload()
-        run('ls ./deploy')
+        deploy()

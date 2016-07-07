@@ -23,8 +23,8 @@ class LogConfig(object):
 
 
 class DirConfig(object):
-    BASE_DIR = './deploy/'
-    RELATIVE_DATA_DIR = '../data/'
-    TAR_DIR = 'deploy_files/'
+    REMOTE_BASE_DIR = './deploy/'
+    REMOTE_PROJ_DIR = 'job_analysis/app/static/data'
+    LOCAL_RELATIVE_DATA_DIR = '../data/'
     LOCAL_TAR_DIR = 'deploy_files/'
     ANALYSIS_DIR = '../analysis'
