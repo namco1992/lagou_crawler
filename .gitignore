@@ -97,3 +97,4 @@ config.py
 .webassets-cache
 *.sqlite
 migrations
+settings.py
